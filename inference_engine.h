@@ -8,6 +8,8 @@
 class InferenceEngine {
 private:
     Ort::Env env;
+    Ort::SessionOptions session_options;
+    static Ort::SessionOptions create_session_options();
     Ort::Session session;
     std::vector<float> output_buffer;
 

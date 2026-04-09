@@ -2,8 +2,9 @@
 #include <iostream>
 
     InferenceEngine::InferenceEngine(const std::string& model_path) 
-        : env(ORT_LOGGING_LEVEL_WARNING, "LiteInferEngine"), 
-          session(env, model_path.c_str(), Ort::SessionOptions{nullptr}),
+        : env(ORT_LOGGING_LEVEL_WARNING, "LiteInferEngine"),
+          session_options(create_session_options()), 
+          session(env, model_path.c_str(), session_options),
           output_buffer(10, 0.0f)
     {
         std::cout << "Model loaded successfully!" << std::endl;
@@ -13,12 +14,25 @@
         return output_buffer;
     }
 
+    Ort::SessionOptions InferenceEngine::create_session_options() {
+        Ort::SessionOptions opts;
+        OrtCUDAProviderOptions cuda_options;
+
+        cuda_options.device_id = 0;
+        cuda_options.gpu_mem_limit = 1024 * 1024 * 1024;
+        cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearchExhaustive;
+        cuda_options.do_copy_in_default_stream = 1;
+
+        opts.AppendExecutionProvider_CUDA(cuda_options);
+        return opts;
+    }
+
     void InferenceEngine::forward_pass(const std::vector<float>& input_frame) {
         const float* input = input_frame.data();
         float* output = output_buffer.data();
 
-        Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(
-            OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault
+        Ort::MemoryInfo memory_info = Ort::MemoryInfo("Cuda",
+            OrtAllocatorType::OrtDeviceAllocator, 0, OrtMemType::OrtMemTypeDefault
         );
 
         std::vector<int64_t> input_shape = {1, 1, 28, 28};

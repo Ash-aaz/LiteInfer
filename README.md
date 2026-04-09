@@ -1,6 +1,6 @@
 # Lite-Infer
 
-A lightweight local AI inference engine written in C++ using ONNX Runtime. Runs models directly on bare metal without Python or framework overhead.
+A lightweight local AI inference engine written in C++ using ONNX Runtime. Runs models directly on hardware without Python or framework overhead.
 
 Built as a learning project to improve C++ skills and API understanding.
 
@@ -9,13 +9,15 @@ Built as a learning project to improve C++ skills and API understanding.
 - CPU inference via ONNX Runtime
 - Clean C++ class interface — load a model, run a forward pass, read predictions
 - Demonstrated on MNIST-8 digit classification
+- GPU acceleration via CUDA execution provider
 
 ## Dependencies
 
 - [ONNX Runtime](https://onnxruntime.ai/) — install via your package manager
-  - Arch/CachyOS: `sudo pacman -S onnxruntime`
+  - Arch/CachyOS: `sudo pacman -S onnxruntime-opt-cuda`
 - CMake 3.10+
 - C++17 compiler
+- Cuda 13.x
 
 ## Build
 
@@ -45,7 +47,7 @@ Lite-Infer/
 
 ## Roadmap
 
-- [ ] CUDA execution via ONNX Runtime CUDA provider
+- [x] CUDA execution via ONNX Runtime CUDA provider
 - [ ] Real image input pipeline
 - [ ] Softmax post-processing
 - [ ] Benchmarking CPU vs GPU latency
