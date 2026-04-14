@@ -2,6 +2,9 @@
 #include "third_party/stb_image.h"
 #include "inference_engine.h"
 #include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 
 std::vector<float> load_image(const std::string& model_path) {
     int width, height, channels;
@@ -30,10 +33,24 @@ int main() {
     std::vector<float> image_pixels = load_image("test_image/60000.png");
 
     engine.forward_pass(image_pixels);
-    auto outputs = engine.get_predictions();
+    std::vector<float> outputs = engine.get_predictions();
+    float max_output = *std::max_element(outputs.begin(), outputs.end());
 
-    for(int i =0; i < 10; ++i) {
-        std::cout << i << ": " << outputs[i] << "\n";
+    std::vector<float> predictions;
+    predictions.reserve(outputs.size());
+
+    float total_exponentiated_value = 0;
+
+    for (int i = 0; i < outputs.size(); i++) {
+        total_exponentiated_value += exp(outputs[i] - max_output);
+    }
+
+    for (int j = 0; j < outputs.size(); j++) {
+        predictions.push_back((exp(outputs[j] - max_output))/total_exponentiated_value);
+    }
+
+    for (int k = 0; k < 10; ++k) {
+        std::cout << k << ": " << std::fixed << std::setprecision(2) << predictions[k] * 100 << "\n";
     }
     return 0;
 }

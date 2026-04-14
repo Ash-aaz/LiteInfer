@@ -6,7 +6,7 @@ Built as a learning project to improve C++ skills and API understanding.
 
 ## Features
 
-- CPU inference via ONNX Runtime
+- GPU-accelerated inference via CUDA via ONNX Runtime
 - Clean C++ class interface — load a model, run a forward pass, read predictions
 - Demonstrated on MNIST-8 digit classification
 - GPU acceleration via CUDA execution provider
@@ -18,7 +18,7 @@ Built as a learning project to improve C++ skills and API understanding.
 - CMake 3.10+
 - C++17 compiler
 - Cuda 13.x
-- stb_image.h 
+- stb_image.h `Header file already included in third_party/`
 
 ## Build
 
@@ -43,12 +43,14 @@ INFERENCE_ENGINE/
 ├── inference_engine.h      # Class declaration
 ├── inference.cpp           # Inference engine implementation
 ├── main.cpp                # Entry point
-└── CMakeLists.txt
+├── CMakeLists.txt
+├── third_party/            # stb_image.h and other single-header libraries
+└── test_image/             # Sample input images
 ```
 
 ## Roadmap
 
 - [x] CUDA execution via ONNX Runtime CUDA provider
 - [x] Real image input pipeline
-- [ ] Softmax post-processing
+- [x] Softmax post-processing
 - [ ] Benchmarking CPU vs GPU latency
