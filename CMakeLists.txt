@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(LiteInferEngine)
 add_executable(engine main.cpp inference.cpp)
-target_include_directories(engine PRIVATE /usr/include/onnxruntime)
+target_include_directories(engine PRIVATE 
+                    /usr/include/onnxruntime
+                    ${CMAKE_SOURCE_DIR}/third_party)
 target_link_libraries(engine PRIVATE 
                     /usr/lib/libonnxruntime.so)

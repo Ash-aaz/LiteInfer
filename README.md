@@ -18,6 +18,7 @@ Built as a learning project to improve C++ skills and API understanding.
 - CMake 3.10+
 - C++17 compiler
 - Cuda 13.x
+- stb_image.h 
 
 ## Build
 
@@ -37,7 +38,7 @@ make
 ## Project Structure
 
 ```
-Lite-Infer/
+INFERENCE_ENGINE/
 ├── model/                  # Place your .onnx model files here
 ├── inference_engine.h      # Class declaration
 ├── inference.cpp           # Inference engine implementation
@@ -48,6 +49,6 @@ Lite-Infer/
 ## Roadmap
 
 - [x] CUDA execution via ONNX Runtime CUDA provider
-- [ ] Real image input pipeline
+- [x] Real image input pipeline
 - [ ] Softmax post-processing
 - [ ] Benchmarking CPU vs GPU latency
