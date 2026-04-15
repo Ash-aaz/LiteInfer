@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <chrono>
 
 std::vector<float> load_image(const std::string& model_path) {
     int width, height, channels;
@@ -29,11 +30,26 @@ std::vector<float> load_image(const std::string& model_path) {
 }
 
 int main() {
-    InferenceEngine engine("model/mnist-8.onnx");
+    InferenceEngine gpu_engine("model/mnist-8.onnx", Device::CUDA);
+    InferenceEngine cpu_engine("model/mnist-8.onnx", Device::CPU);
+
     std::vector<float> image_pixels = load_image("test_image/60000.png");
 
-    engine.forward_pass(image_pixels);
-    std::vector<float> outputs = engine.get_predictions();
+    // warmup both to increase latency accuracy
+    gpu_engine.forward_pass(image_pixels);
+    cpu_engine.forward_pass(image_pixels);
+
+    auto start_gpu = std::chrono::high_resolution_clock::now();
+    gpu_engine.forward_pass(image_pixels);
+    auto end_gpu = std::chrono::high_resolution_clock::now();
+    auto duration_gpu = std::chrono::duration_cast<std::chrono::microseconds>(end_gpu - start_gpu);
+
+    auto start_cpu = std::chrono::high_resolution_clock::now();
+    cpu_engine.forward_pass(image_pixels);
+    auto end_cpu = std::chrono::high_resolution_clock::now();
+    auto duration_cpu = std::chrono::duration_cast<std::chrono::microseconds>(end_cpu - start_cpu);
+
+    std::vector<float> outputs = gpu_engine.get_predictions();
     float max_output = *std::max_element(outputs.begin(), outputs.end());
 
     std::vector<float> predictions;
@@ -52,6 +68,8 @@ int main() {
     for (int k = 0; k < 10; ++k) {
         std::cout << k << ": " << std::fixed << std::setprecision(2) << predictions[k] * 100 << "\n";
     }
+    std::cout << "GPU Latency: " << duration_gpu.count() << "µs" << "\n";
+    std::cout << "CPU Latency: " << duration_cpu.count() << "µs" << "\n";
     return 0;
 }
 

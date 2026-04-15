@@ -53,4 +53,4 @@ INFERENCE_ENGINE/
 - [x] CUDA execution via ONNX Runtime CUDA provider
 - [x] Real image input pipeline
 - [x] Softmax post-processing
-- [ ] Benchmarking CPU vs GPU latency
+- [x] Benchmarking CPU vs GPU latency
